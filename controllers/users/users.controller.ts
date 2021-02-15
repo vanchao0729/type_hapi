@@ -34,8 +34,13 @@ export const userController = (con: Connection): Array<ServerRoute> => {
                     return Object.keys(q).map( (key: string) => `${key}=${q[key]}` ).join('&');
                 };
                 const qp = getQuery().length === 0 ? '' : `&${getQuery()}`;
+                const data = await userRepo.find(findOptions);
                 return  {
-                    data: await userRepo.find(findOptions),
+                    data: data.map( (u: UsersEntity) => {
+                        delete u.password;
+                        delete u.salt;
+                        return u;
+                    } ),
                     perPage: realTake,
                     page: +page || 1,
                     next: `http://localhost:9000/users?perPage=${realTake}&page=${+page + 1}${qp}`,
@@ -46,8 +51,11 @@ export const userController = (con: Connection): Array<ServerRoute> => {
         {
             method: 'GET',
             path: '/users/{id}',
-            handler: ({params: {id} }: Request, n: ResponseToolkit, err?: Error) => {
-                return userRepo.findOne(id);
+            handler: async ({params: {id} }: Request, n: ResponseToolkit, err?: Error) => {
+                const u: UsersEntity = await userRepo.findOne(id);
+                delete u.password;
+                delete u.salt;
+                return u;
             },
         },
         {
@@ -72,6 +80,8 @@ export const userController = (con: Connection): Array<ServerRoute> => {
                 const u = await userRepo.findOne(id);
                 Object.keys(payload).forEach( (key: string) => (u[key] = payload[key]) );
                 userRepo.update(id, u);
+                delete u.password;
+                delete u.salt;
                 return u;
             },
         },
@@ -81,6 +91,8 @@ export const userController = (con: Connection): Array<ServerRoute> => {
             handler: async ({params: {id}}: Request, n: ResponseToolkit, err?: Error) => {
                 const u = await userRepo.findOne(id);
                 userRepo.remove(u);
+                delete u.password;
+                delete u.salt;
                 return u;
             },
         }

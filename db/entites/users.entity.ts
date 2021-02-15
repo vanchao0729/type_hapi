@@ -11,7 +11,9 @@ export class UsersEntity extends SharedProp{
         lastName: string,
         email: string,
         birthOfDate?: Date,
-        type?: UserType
+        type?: UserType,
+        salt?: string,
+        password?: string
     ) {
         super();
         this.firstName = firstName;
@@ -19,6 +21,8 @@ export class UsersEntity extends SharedProp{
         this.birthOfDate = birthOfDate;
         this.email = email;
         this.type = type;
+        this.salt = salt;
+        this.password = password;
     }
 
     @PrimaryGeneratedColumn()
@@ -38,6 +42,12 @@ export class UsersEntity extends SharedProp{
 
     @Column({ default: 'user' })
     type: UserType;
+
+    @Column( {nullable: false} )
+    password: string;
+
+    @Column( {nullable: false} )
+    salt: string;
 
     @OneToMany(() => PostsEntity, (post: PostsEntity) => post.user, {
         onDelete: 'CASCADE',
