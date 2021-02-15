@@ -3,6 +3,8 @@ import { Server, ResponseToolkit, Request } from 'hapi';
 import { initDb } from './db';
 import 'colors';
 import { get } from 'node-emoji';
+import { userController } from './controllers';
+import { Connection } from 'typeorm';
 
 const init = async () => {
     const server: Server = Hapi.server({
@@ -18,8 +20,10 @@ const init = async () => {
         },
     });
 
-    await initDb().then( () => console.log( get('dvd') , 'DB init -> Done!', get('dvd') ) );
-    await server.start().then( );
+    const con:Connection = await initDb();
+    console.log( get('dvd') , 'DB init -> Done!', get('dvd') );
+    server.route(userController(con));
+    await server.start().then();
     console.log( get('rocket'), `Server running on ${server.info.uri}` . green, get('rocket') ) ;
 };
 
