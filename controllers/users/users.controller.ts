@@ -35,6 +35,10 @@ export const userController = (con: Connection): Array<ServerRoute> => {
                 };
                 const qp = getQuery().length === 0 ? '' : `&${getQuery()}`;
                 const data = await userRepo.find(findOptions);
+                const p_page = ((page: string): string => { 
+                    let int_page: number = parseInt(page);
+                    return int_page > 1 ? (int_page - 1).toString() : '1';
+                })(page.toString());
                 return  {
                     data: data.map( (u: UsersEntity) => {
                         delete u.password;
@@ -44,7 +48,7 @@ export const userController = (con: Connection): Array<ServerRoute> => {
                     perPage: realTake,
                     page: +page || 1,
                     next: `http://localhost:9000/users?perPage=${realTake}&page=${+page + 1}${qp}`,
-                    prev: `http://localhost:9000/users?perPage=${realTake}&page=${+page - 1}${qp}`,
+                    prev: `http://localhost:9000/users?perPage=${realTake}&page=${p_page}${qp}`,
                 };
             },
         },
@@ -63,10 +67,14 @@ export const userController = (con: Connection): Array<ServerRoute> => {
             path: '/users',
             handler: ({payload}: Request, n: ResponseToolkit, err?: Error) => {
                 const { firstName, lastName, email, birthOfDate } = payload as Partial<UsersEntity>;
+                const pwd = "";
+                const salt = "";
                 const u: Partial<UsersEntity> = new UsersEntity(
                     firstName,
                     lastName,
                     email,
+                    pwd,
+                    salt,
                     birthOfDate
                 );
 

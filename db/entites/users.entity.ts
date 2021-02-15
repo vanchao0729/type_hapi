@@ -10,19 +10,19 @@ export class UsersEntity extends SharedProp{
         firstName: string,
         lastName: string,
         email: string,
-        birthOfDate?: Date,
-        type?: UserType,
+        password?: string,
         salt?: string,
-        password?: string
+        birthOfDate?: Date,
+        type?: UserType
     ) {
         super();
         this.firstName = firstName;
         this.lastName = lastName;
+        this.password = password;
+        this.salt = salt;
         this.birthOfDate = birthOfDate;
         this.email = email;
         this.type = type;
-        this.salt = salt;
-        this.password = password;
     }
 
     @PrimaryGeneratedColumn()
