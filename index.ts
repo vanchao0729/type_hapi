@@ -12,14 +12,6 @@ const init = async () => {
         host: 'localhost'
     });
 
-    server.route({
-        method: 'GET',
-        path:'/',
-        handler: (request: Request, h: ResponseToolkit, err?: Error) => {
-            return "Hi";
-        },
-    });
-
     const con:Connection = await initDb();
     console.log( get('dvd') , 'DB init -> Done!', get('dvd') );
     server.route([...userController(con), ...authController(con)] as Array<ServerRoute>);
