@@ -1,2 +1,5 @@
 node_modules
 node_modules/*
+hapi.db
+hapi.db-shm
+hapi.db-wal
